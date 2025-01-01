@@ -27,16 +27,18 @@ header p {
 
 .container {
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    justify-content: space-between; /* Ajusta o espaço entre os blocos */
+    align-items: flex-start; /* Garante o alinhamento no topo */
+    gap: 15px; /* Define um espaçamento fixo entre os blocos */
     margin: 20px;
 }
 
 .block {
+    flex: 1; /* Faz os blocos ocuparem o mesmo espaço */
+    max-width: 48%; /* Garante que os blocos não ultrapassem metade da largura */
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 45%;
 }
 
 textarea, iframe {
