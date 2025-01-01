@@ -1,1 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisador de HTML SEO PagueMenos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Analisador de HTML SEO PagueMenos</h1>
+        <p>Desenvolvido por Junior Silva</p>
+    </header>
 
+    <div class="toolbar">
+        <button id="boldButton">Negrito</button>
+        <button id="linkButton">Inserir Link</button>
+    </div>
+
+    <div class="container">
+        <div class="block">
+            <textarea id="htmlInput" placeholder="Cole o código HTML aqui..."></textarea>
+        </div>
+        <div class="block">
+            <iframe id="renderedOutput" sandbox="allow-same-origin allow-scripts"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const htmlInput = document.getElementById("htmlInput");
+        const renderedOutput = document.getElementById("renderedOutput");
+        const boldButton = document.getElementById("boldButton");
+        const linkButton = document.getElementById("linkButton");
+
+        // Update rendered output when HTML input changes
+        htmlInput.addEventListener("input", () => {
+            renderedOutput.srcdoc = htmlInput.value;
+        });
+
+        // Sync HTML back to input when rendered output is edited (if editable)
+        renderedOutput.addEventListener("load", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            doc.body.contentEditable = true;
+
+            doc.body.addEventListener("input", () => {
+                htmlInput.value = doc.body.innerHTML;
+            });
+
+            // Make links clickable
+            doc.body.addEventListener("click", (event) => {
+                if (event.target.tagName === "A") {
+                    event.preventDefault();
+                    window.open(event.target.href, '_blank');
+                }
+            });
+        });
+
+        // Add bold functionality
+        boldButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const strong = doc.createElement("strong");
+                strong.appendChild(range.extractContents());
+                range.insertNode(strong);
+                htmlInput.value = doc.body.innerHTML;
+            }
+        });
+
+        // Add link functionality
+        linkButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const link = prompt("Insira o link:");
+                if (link) {
+                    const range = selection.getRangeAt(0);
+                    const anchor = doc.createElement("a");
+                    anchor.setAttribute("href", link);
+                    anchor.appendChild(range.extractContents());
+                    range.insertNode(anchor);
+
+                    // Update HTML input immediately
+                    htmlInput.value = doc.body.innerHTML.replace(/href="(.*?)"/g, 'href=$1');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
