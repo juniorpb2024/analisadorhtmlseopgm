@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisador de HTML SEO PagueMenos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px;
+        }
+        .block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45%;
+        }
+        textarea {
+            width: 100%;
+            height: 500px;
+            padding: 15px;
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: vertical;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Analisador de HTML SEO PagueMenos</h1>
+        <p>Desenvolvido por Junior Silva</p>
+    </header>
+
+    <div>
+        <button id="boldButton">Negrito</button>
+        <button id="linkButton">Inserir Link</button>
+    </div>
+
+    <div class="container">
+        <div class="block">
+            <button onclick="copyHTML()">Copiar Código</button>
+            <textarea id="htmlInput" placeholder="Cole o código HTML aqui..."></textarea>
+        </div>
+        <div class="block">
+            <button onclick="copyRenderedText()">Copiar Texto</button>
+            <iframe id="renderedOutput" sandbox="allow-same-origin allow-scripts"></iframe>
+        </div>
+    </div>
+
+    <script>
+        const htmlInput = document.getElementById("htmlInput");
+        const renderedOutput = document.getElementById("renderedOutput");
+        const boldButton = document.getElementById("boldButton");
+        const linkButton = document.getElementById("linkButton");
+
+        // Update rendered output when HTML input changes
+        htmlInput.addEventListener("input", () => {
+            renderedOutput.srcdoc = htmlInput.value;
+        });
+
+        // Sync HTML back to input when rendered output is edited (if editable)
+        renderedOutput.addEventListener("load", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            doc.body.contentEditable = true;
+
+            doc.body.addEventListener("input", () => {
+                htmlInput.value = doc.body.innerHTML;
+            });
+
+            // Make links clickable
+            doc.body.addEventListener("click", (event) => {
+                if (event.target.tagName === "A") {
+                    event.preventDefault();
+                    window.open(event.target.href, '_blank');
+                }
+            });
+        });
+
+        // Add bold functionality
+        boldButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const strong = doc.createElement("strong");
+                strong.appendChild(range.extractContents());
+                range.insertNode(strong);
+                htmlInput.value = doc.body.innerHTML;
+            }
+        });
+
+        // Add link functionality
+        linkButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const link = prompt("Insira o link:");
+                if (link) {
+                    const range = selection.getRangeAt(0);
+                    const anchor = doc.createElement("a");
+                    anchor.setAttribute("href", link);
+                    anchor.appendChild(range.extractContents());
+                    range.insertNode(anchor);
+
+                    // Update HTML input immediately
+                    htmlInput.value = doc.body.innerHTML.replace(/href="(.*?)"/g, 'href=$1');
+                }
+            }
+        });
+
+        // Function to copy HTML content
+        function copyHTML() {
+            htmlInput.select();
+            document.execCommand('copy');
+            alert('Código HTML copiado para a área de transferência!');
+        }
+
+        // Function to copy rendered text content exactly as displayed
+        function copyRenderedText() {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = doc.body.innerHTML;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = tempDiv.innerText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Texto copiado para a área de transferência!');
+        }
+    </script>
+</body>
+</html>
