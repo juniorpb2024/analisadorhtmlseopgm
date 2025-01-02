@@ -116,12 +116,12 @@
         const boldButton = document.getElementById("boldButton");
         const linkButton = document.getElementById("linkButton");
 
-        // Atualizar a prévia do conteúdo renderizado ao alterar o HTML
+        // Update rendered output when HTML input changes
         htmlInput.addEventListener("input", () => {
             renderedOutput.srcdoc = htmlInput.value;
         });
 
-        // Sincronizar o HTML de volta ao input quando a saída renderizada for editada
+        // Sync HTML back to input when rendered output is edited (if editable)
         renderedOutput.addEventListener("load", () => {
             const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
             doc.body.contentEditable = true;
@@ -130,14 +130,16 @@
                 htmlInput.value = doc.body.innerHTML;
             });
 
-            // Corrigir links para que abram na mesma aba
-            const links = doc.getElementsByTagName("a");
-            for (const link of links) {
-                link.target = "_self";
-            }
+            // Make links clickable
+            doc.body.addEventListener("click", (event) => {
+                if (event.target.tagName === "A") {
+                    event.preventDefault();
+                    window.location.href = event.target.href;
+                }
+            });
         });
 
-        // Adicionar funcionalidade de negrito
+        // Add bold functionality
         boldButton.addEventListener("click", () => {
             const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
             const selection = doc.getSelection();
@@ -150,7 +152,7 @@
             }
         });
 
-        // Adicionar funcionalidade de link
+        // Add link functionality
         linkButton.addEventListener("click", () => {
             const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
             const selection = doc.getSelection();
@@ -160,12 +162,11 @@
                     const range = selection.getRangeAt(0);
                     const anchor = doc.createElement("a");
                     anchor.setAttribute("href", link);
-                    anchor.setAttribute("target", "_self"); // Certifique-se de abrir no mesmo local
                     anchor.appendChild(range.extractContents());
                     range.insertNode(anchor);
 
-                    // Atualizar o HTML no textarea imediatamente
-                    htmlInput.value = doc.body.innerHTML;
+                    // Update HTML input immediately
+                    htmlInput.value = doc.body.innerHTML.replace(/href="(.*?)"/g, 'href=$1');
                 }
             }
         });
