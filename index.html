@@ -184,9 +184,21 @@
             const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
             if (doc && doc.body) {
                 const html = doc.body.innerHTML;
-                const updatedHtml = html.replace(/href="(.*?)"/g, 'href=$1');
-                doc.body.innerHTML = updatedHtml;
-                htmlInput.value = updatedHtml;
+                const parser = new DOMParser();
+                const docParsed = parser.parseFromString(html, "text/html");
+
+                docParsed.querySelectorAll("a[href]").forEach(link => {
+                    const hrefValue = link.getAttribute("href");
+                    if (hrefValue) {
+                        link.setAttribute("href", hrefValue.replace(/"/g, ""));
+                    }
+                });
+
+                // Serialize back to string and update HTML
+                const serializer = new XMLSerializer();
+                const cleanedHtml = serializer.serializeToString(docParsed.body);
+                doc.body.innerHTML = cleanedHtml;
+                htmlInput.value = cleanedHtml;
             }
         });
     </script>
