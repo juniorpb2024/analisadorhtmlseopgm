@@ -75,10 +75,16 @@
             transition: transform 0.2s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        button.green {
+            background-color: #28a745;
+        }
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
             background-color: #0056b3;
+        }
+        button.green:hover {
+            background-color: #218838;
         }
         button:active {
             transform: translateY(2px);
@@ -99,6 +105,7 @@
     <div>
         <button id="boldButton">Negrito</button>
         <button id="linkButton">Inserir Link</button>
+        <button id="clearLinkButton" class="green">Limpar Link</button>
     </div>
 
     <div class="container">
@@ -115,6 +122,7 @@
         const renderedOutput = document.getElementById("renderedOutput");
         const boldButton = document.getElementById("boldButton");
         const linkButton = document.getElementById("linkButton");
+        const clearLinkButton = document.getElementById("clearLinkButton");
 
         // Update rendered output when HTML input changes
         htmlInput.addEventListener("input", () => {
@@ -166,8 +174,19 @@
                     range.insertNode(anchor);
 
                     // Update HTML input immediately
-                    htmlInput.value = doc.body.innerHTML.replace(/href="(.*?)"/g, 'href=$1');
+                    htmlInput.value = doc.body.innerHTML;
                 }
+            }
+        });
+
+        // Clear href quotes
+        clearLinkButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            if (doc && doc.body) {
+                const html = doc.body.innerHTML;
+                const updatedHtml = html.replace(/href="(.*?)"/g, 'href=$1');
+                doc.body.innerHTML = updatedHtml;
+                htmlInput.value = updatedHtml;
             }
         });
     </script>
