@@ -23,14 +23,6 @@
         header h1 {
             margin: 0;
             font-size: 2rem;
-            padding: 10px;
-            border: 2px solid white;
-            border-radius: 8px;
-            display: inline-block;
-        }
-        header p {
-            margin: 5px 0 0;
-            font-size: 1rem;
         }
         .container {
             display: flex;
@@ -47,59 +39,34 @@
         textarea {
             width: 100%;
             height: 500px;
-            padding: 15px;
             font-size: 16px;
-            font-family: 'Roboto', sans-serif;
             border: 2px solid #007bff;
             border-radius: 8px;
             resize: vertical;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         iframe {
             width: 100%;
             height: 500px;
             border: 2px solid #ccc;
             border-radius: 8px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         button {
-            margin: 5px;
+            margin: 10px;
             padding: 10px 20px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         button.green {
             background-color: #28a745;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-            background-color: #0056b3;
-        }
-        button.green:hover {
-            background-color: #218838;
-        }
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        button:focus {
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Analisador de HTML SEO Pague Menos</h1>
-        <p>Desenvolvido por Junior Silva</p>
+        <h1>Analisador de HTML SEO PagueMenos</h1>
     </header>
 
     <div>
@@ -120,86 +87,33 @@
     <script>
         const htmlInput = document.getElementById("htmlInput");
         const renderedOutput = document.getElementById("renderedOutput");
-        const boldButton = document.getElementById("boldButton");
-        const linkButton = document.getElementById("linkButton");
         const clearLinkButton = document.getElementById("clearLinkButton");
 
-        // Update rendered output when HTML input changes
+        // Atualizar o iframe quando o conteúdo do textarea muda
         htmlInput.addEventListener("input", () => {
             renderedOutput.srcdoc = htmlInput.value;
         });
 
-        // Sync HTML back to input when rendered output is edited (if editable)
-        renderedOutput.addEventListener("load", () => {
-            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
-            doc.body.contentEditable = true;
-
-            doc.body.addEventListener("input", () => {
-                htmlInput.value = doc.body.innerHTML;
-            });
-
-            // Make links clickable
-            doc.body.addEventListener("click", (event) => {
-                if (event.target.tagName === "A") {
-                    event.preventDefault();
-                    window.location.href = event.target.href;
-                }
-            });
-        });
-
-        // Add bold functionality
-        boldButton.addEventListener("click", () => {
-            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
-            const selection = doc.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const strong = doc.createElement("strong");
-                strong.appendChild(range.extractContents());
-                range.insertNode(strong);
-                htmlInput.value = doc.body.innerHTML;
-            }
-        });
-
-        // Add link functionality
-        linkButton.addEventListener("click", () => {
-            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
-            const selection = doc.getSelection();
-            if (selection.rangeCount > 0) {
-                const link = prompt("Insira o link:");
-                if (link) {
-                    const range = selection.getRangeAt(0);
-                    const anchor = doc.createElement("a");
-                    anchor.setAttribute("href", link);
-                    anchor.appendChild(range.extractContents());
-                    range.insertNode(anchor);
-
-                    // Update HTML input immediately
-                    htmlInput.value = doc.body.innerHTML;
-                }
-            }
-        });
-
-        // Clear href quotes
+        // Botão para limpar aspas de href
         clearLinkButton.addEventListener("click", () => {
-            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
-            if (doc && doc.body) {
-                const html = doc.body.innerHTML;
-                const parser = new DOMParser();
-                const docParsed = parser.parseFromString(html, "text/html");
+            const parser = new DOMParser();
+            const html = htmlInput.value;
+            const doc = parser.parseFromString(html, "text/html");
 
-                docParsed.querySelectorAll("a[href]").forEach(link => {
-                    const hrefValue = link.getAttribute("href");
-                    if (hrefValue) {
-                        link.setAttribute("href", hrefValue.replace(/"/g, ""));
-                    }
-                });
+            doc.querySelectorAll("a[href]").forEach(link => {
+                const hrefValue = link.getAttribute("href");
+                if (hrefValue) {
+                    link.setAttribute("href", hrefValue.replace(/"/g, ""));
+                }
+            });
 
-                // Serialize back to string and update HTML
-                const serializer = new XMLSerializer();
-                const cleanedHtml = serializer.serializeToString(docParsed.body);
-                doc.body.innerHTML = cleanedHtml;
-                htmlInput.value = cleanedHtml;
-            }
+            // Serializar o conteúdo de volta para string
+            const serializer = new XMLSerializer();
+            const cleanedHtml = serializer.serializeToString(doc.body);
+
+            // Atualizar o textarea e o iframe
+            htmlInput.value = cleanedHtml;
+            renderedOutput.srcdoc = cleanedHtml;
         });
     </script>
 </body>
