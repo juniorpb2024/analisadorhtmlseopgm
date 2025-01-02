@@ -23,6 +23,14 @@
         header h1 {
             margin: 0;
             font-size: 2rem;
+            padding: 10px;
+            border: 2px solid white;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
         }
         .container {
             display: flex;
@@ -39,40 +47,58 @@
         textarea {
             width: 100%;
             height: 500px;
+            padding: 15px;
             font-size: 16px;
+            font-family: 'Roboto', sans-serif;
             border: 2px solid #007bff;
             border-radius: 8px;
             resize: vertical;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         iframe {
             width: 100%;
             height: 500px;
             border: 2px solid #ccc;
             border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         button {
-            margin: 10px;
+            margin: 5px;
             padding: 10px 20px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        button.green {
-            background-color: #28a745;
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+            background-color: #0056b3;
+        }
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Analisador de HTML SEO PagueMenos</h1>
+        <h1>Analisador de HTML SEO Pague Menos</h1>
+        <p>Desenvolvido por Junior Silva</p>
     </header>
 
     <div>
         <button id="boldButton">Negrito</button>
         <button id="linkButton">Inserir Link</button>
-        <button id="clearLinkButton" class="green">Limpar Link</button>
     </div>
 
     <div class="container">
@@ -87,33 +113,61 @@
     <script>
         const htmlInput = document.getElementById("htmlInput");
         const renderedOutput = document.getElementById("renderedOutput");
-        const clearLinkButton = document.getElementById("clearLinkButton");
+        const boldButton = document.getElementById("boldButton");
+        const linkButton = document.getElementById("linkButton");
 
-        // Atualizar o iframe quando o conteúdo do textarea muda
+        // Atualizar a prévia do conteúdo renderizado ao alterar o HTML
         htmlInput.addEventListener("input", () => {
             renderedOutput.srcdoc = htmlInput.value;
         });
 
-        // Botão para limpar aspas de href
-        clearLinkButton.addEventListener("click", () => {
-            const parser = new DOMParser();
-            const html = htmlInput.value;
-            const doc = parser.parseFromString(html, "text/html");
+        // Sincronizar o HTML de volta ao input quando a saída renderizada for editada
+        renderedOutput.addEventListener("load", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            doc.body.contentEditable = true;
 
-            doc.querySelectorAll("a[href]").forEach(link => {
-                const hrefValue = link.getAttribute("href");
-                if (hrefValue) {
-                    link.setAttribute("href", hrefValue.replace(/"/g, ""));
-                }
+            doc.body.addEventListener("input", () => {
+                htmlInput.value = doc.body.innerHTML;
             });
 
-            // Serializar o conteúdo de volta para string
-            const serializer = new XMLSerializer();
-            const cleanedHtml = serializer.serializeToString(doc.body);
+            // Corrigir links para que abram na mesma aba
+            const links = doc.getElementsByTagName("a");
+            for (const link of links) {
+                link.target = "_self";
+            }
+        });
 
-            // Atualizar o textarea e o iframe
-            htmlInput.value = cleanedHtml;
-            renderedOutput.srcdoc = cleanedHtml;
+        // Adicionar funcionalidade de negrito
+        boldButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const strong = doc.createElement("strong");
+                strong.appendChild(range.extractContents());
+                range.insertNode(strong);
+                htmlInput.value = doc.body.innerHTML;
+            }
+        });
+
+        // Adicionar funcionalidade de link
+        linkButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const link = prompt("Insira o link:");
+                if (link) {
+                    const range = selection.getRangeAt(0);
+                    const anchor = doc.createElement("a");
+                    anchor.setAttribute("href", link);
+                    anchor.setAttribute("target", "_self"); // Certifique-se de abrir no mesmo local
+                    anchor.appendChild(range.extractContents());
+                    range.insertNode(anchor);
+
+                    // Atualizar o HTML no textarea imediatamente
+                    htmlInput.value = doc.body.innerHTML;
+                }
+            }
         });
     </script>
 </body>
