@@ -115,15 +115,7 @@
             doc.body.contentEditable = true;
 
             doc.body.addEventListener("input", () => {
-                htmlInput.value = doc.body.innerHTML;
-            });
-
-            // Make links clickable and open in the same tab
-            doc.body.addEventListener("click", (event) => {
-                if (event.target.tagName === "A") {
-                    event.preventDefault();
-                    window.location.href = event.target.href;
-                }
+                htmlInput.value = doc.body.innerHTML.replace(/\\u00A0/g, ' '); // Substituir &nbsp; por espaços normais
             });
         });
 
@@ -136,7 +128,7 @@
                 const strong = doc.createElement("strong");
                 strong.appendChild(range.extractContents());
                 range.insertNode(strong);
-                htmlInput.value = doc.body.innerHTML;
+                htmlInput.value = doc.body.innerHTML.replace(/\\u00A0/g, ' '); // Substituir &nbsp; por espaços normais
             }
         });
 
@@ -148,8 +140,6 @@
                 const link = prompt("Insira o link:");
                 if (link) {
                     const range = selection.getRangeAt(0);
-                    
-                    // Remover qualquer formatação que possa causar conflitos
                     const selectedText = range.extractContents();
                     const anchor = doc.createElement("a");
                     anchor.setAttribute("href", link);
@@ -157,7 +147,7 @@
                     range.insertNode(anchor);
 
                     // Atualizar o HTML no textarea
-                    htmlInput.value = doc.body.innerHTML;
+                    htmlInput.value = doc.body.innerHTML.replace(/\\u00A0/g, ' '); // Substituir &nbsp; por espaços normais
                 }
             }
         });
