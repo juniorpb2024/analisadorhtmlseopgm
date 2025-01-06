@@ -148,13 +148,16 @@
                 const link = prompt("Insira o link:");
                 if (link) {
                     const range = selection.getRangeAt(0);
+                    
+                    // Remover qualquer formatação que possa causar conflitos
+                    const selectedText = range.extractContents();
                     const anchor = doc.createElement("a");
                     anchor.setAttribute("href", link);
-                    anchor.appendChild(range.extractContents());
+                    anchor.textContent = selectedText.textContent; // Adicionar somente o texto puro
                     range.insertNode(anchor);
 
-                    // Update HTML input immediately
-                    htmlInput.value = doc.body.innerHTML.replace(/href="(.*?)"/g, 'href=$1');
+                    // Atualizar o HTML no textarea
+                    htmlInput.value = doc.body.innerHTML;
                 }
             }
         });
