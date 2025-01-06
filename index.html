@@ -118,11 +118,11 @@
                 htmlInput.value = doc.body.innerHTML;
             });
 
-            // Make links clickable
+            // Make links clickable and open in the same tab
             doc.body.addEventListener("click", (event) => {
                 if (event.target.tagName === "A") {
                     event.preventDefault();
-                    window.open(event.target.href, '_blank');
+                    window.location.href = event.target.href;
                 }
             });
         });
