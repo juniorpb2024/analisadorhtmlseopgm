@@ -117,6 +117,14 @@
             doc.body.addEventListener("input", () => {
                 htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             });
+
+            // Abrir links na mesma página
+            doc.body.addEventListener("click", (event) => {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                    window.location.href = event.target.href;
+                }
+            });
         });
 
         // Add bold functionality
