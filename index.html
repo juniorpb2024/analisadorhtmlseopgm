@@ -115,7 +115,7 @@
             doc.body.contentEditable = true;
 
             doc.body.addEventListener("input", () => {
-                htmlInput.value = doc.body.innerHTML.replace(/\\u00A0/g, ' '); // Substituir &nbsp; por espaços normais
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             });
         });
 
@@ -128,7 +128,7 @@
                 const strong = doc.createElement("strong");
                 strong.appendChild(range.extractContents());
                 range.insertNode(strong);
-                htmlInput.value = doc.body.innerHTML.replace(/\\u00A0/g, ' '); // Substituir &nbsp; por espaços normais
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             }
         });
 
@@ -147,7 +147,7 @@
                     range.insertNode(anchor);
 
                     // Atualizar o HTML no textarea
-                    htmlInput.value = doc.body.innerHTML.replace(/\\u00A0/g, ' '); // Substituir &nbsp; por espaços normais
+                    htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
                 }
             }
         });
