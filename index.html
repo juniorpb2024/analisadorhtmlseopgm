@@ -118,11 +118,11 @@
                 htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             });
 
-            // Abrir links na mesma página
+            // Abrir links em nova aba
             doc.body.addEventListener("click", (event) => {
                 if (event.target.tagName === 'A') {
                     event.preventDefault();
-                    window.location.href = event.target.href;
+                    window.open(event.target.href, '_blank');
                 }
             });
         });
@@ -151,6 +151,7 @@
                     const selectedText = range.extractContents();
                     const anchor = doc.createElement("a");
                     anchor.setAttribute("href", link);
+                    anchor.setAttribute("target", "_blank");
                     anchor.textContent = selectedText.textContent; // Adicionar somente o texto puro
                     range.insertNode(anchor);
 
