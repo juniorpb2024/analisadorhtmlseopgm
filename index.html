@@ -91,7 +91,7 @@
 
     <div class="container">
         <div class="block">
-            <textarea id="htmlInput" placeholder="Cole o código HTML aqui..."></textarea>
+            <textarea id="htmlInput" placeholder="Cole o cÃ³digo HTML aqui..."></textarea>
         </div>
         <div class="block">
             <iframe id="renderedOutput" sandbox="allow-same-origin allow-scripts"></iframe>
@@ -115,10 +115,10 @@
             doc.body.contentEditable = true;
 
             doc.body.addEventListener("input", () => {
-                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaÃ§os normais
             });
 
-            // Abrir links na mesma aba
+            // Abrir links na mesma pÃ¡gina
             doc.body.addEventListener("click", (event) => {
                 if (event.target.tagName === 'A') {
                     event.preventDefault();
@@ -136,7 +136,7 @@
                 const strong = doc.createElement("strong");
                 strong.appendChild(range.extractContents());
                 range.insertNode(strong);
-                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaÃ§os normais
             }
         });
 
@@ -151,12 +151,11 @@
                     const selectedText = range.extractContents();
                     const anchor = doc.createElement("a");
                     anchor.setAttribute("href", link);
-                    anchor.setAttribute("target", "_self");
                     anchor.textContent = selectedText.textContent; // Adicionar somente o texto puro
                     range.insertNode(anchor);
 
                     // Atualizar o HTML no textarea
-                    htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
+                    htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaÃ§os normais
                 }
             }
         });
