@@ -87,11 +87,13 @@
     <div>
         <button id="boldButton">Negrito</button>
         <button id="linkButton">Inserir Link</button>
+        <button id="bulletPointsButton">Bullet Points</button>
+        <button id="h2Button">H2</button>
     </div>
 
     <div class="container">
         <div class="block">
-            <textarea id="htmlInput" placeholder="Cole o cÃ³digo HTML aqui..."></textarea>
+            <textarea id="htmlInput" placeholder="Cole o código HTML aqui..."></textarea>
         </div>
         <div class="block">
             <iframe id="renderedOutput" sandbox="allow-same-origin allow-scripts"></iframe>
@@ -103,6 +105,8 @@
         const renderedOutput = document.getElementById("renderedOutput");
         const boldButton = document.getElementById("boldButton");
         const linkButton = document.getElementById("linkButton");
+        const bulletPointsButton = document.getElementById("bulletPointsButton");
+        const h2Button = document.getElementById("h2Button");
 
         // Update rendered output when HTML input changes
         htmlInput.addEventListener("input", () => {
@@ -115,14 +119,22 @@
             doc.body.contentEditable = true;
 
             doc.body.addEventListener("input", () => {
-                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaÃ§os normais
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             });
 
-            // Abrir links na mesma pÃ¡gina
+            // Abrir links na mesma página
             doc.body.addEventListener("click", (event) => {
                 if (event.target.tagName === 'A') {
                     event.preventDefault();
                     window.location.href = event.target.href;
+                }
+            });
+
+            // Preview de link ao passar o mouse
+            doc.body.addEventListener("mouseover", (event) => {
+                if (event.target.tagName === 'A') {
+                    const link = event.target.href;
+                    event.target.title = `Preview: ${link}`;
                 }
             });
         });
@@ -136,7 +148,7 @@
                 const strong = doc.createElement("strong");
                 strong.appendChild(range.extractContents());
                 range.insertNode(strong);
-                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaÃ§os normais
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             }
         });
 
@@ -155,8 +167,34 @@
                     range.insertNode(anchor);
 
                     // Atualizar o HTML no textarea
-                    htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaÃ§os normais
+                    htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
                 }
+            }
+        });
+
+        // Add bullet points functionality
+        bulletPointsButton.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const ul = doc.createElement("ul");
+            for (let i = 0; i < 3; i++) {
+                const li = doc.createElement("li");
+                li.textContent = "•"; // Pode ser alterado para qualquer texto ou ícone
+                ul.appendChild(li);
+            }
+            doc.body.appendChild(ul);
+            htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
+        });
+
+        // Add H2 functionality
+        h2Button.addEventListener("click", () => {
+            const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const h2 = doc.createElement("h2");
+                h2.appendChild(range.extractContents());
+                range.insertNode(h2);
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             }
         });
     </script>
