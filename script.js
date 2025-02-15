@@ -39,8 +39,8 @@ renderedOutput.addEventListener("load", () => {
             const link = event.target.href;
             linkPreview.innerHTML = `<iframe src="${link}"></iframe>`;
             linkPreview.style.display = 'block';
-            linkPreview.style.left = `${event.pageX + 10}px`;
-            linkPreview.style.top = `${event.pageY + 10}px`;
+            linkPreview.style.left = `${event.clientX + 10}px`;
+            linkPreview.style.top = `${event.clientY + 10}px`;
         } else {
             linkPreview.style.display = 'none';
         }
@@ -93,6 +93,18 @@ bulletPointsButton.addEventListener("click", () => {
         li.textContent = range.toString() || "•";
         ul.appendChild(li);
         range.insertNode(ul);
+
+        // Adiciona um evento para criar novos bullet points ao pressionar Enter
+        li.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const newLi = doc.createElement("li");
+                newLi.textContent = "•";
+                ul.appendChild(newLi);
+                newLi.focus();
+            }
+        });
+
         htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' ');
     }
 });
