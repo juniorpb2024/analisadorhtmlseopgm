@@ -76,6 +76,15 @@
             outline: none;
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
+        .link-preview {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -100,6 +109,8 @@
         </div>
     </div>
 
+    <div id="linkPreview" class="link-preview"></div>
+
     <script>
         const htmlInput = document.getElementById("htmlInput");
         const renderedOutput = document.getElementById("renderedOutput");
@@ -107,6 +118,7 @@
         const linkButton = document.getElementById("linkButton");
         const bulletPointsButton = document.getElementById("bulletPointsButton");
         const h2Button = document.getElementById("h2Button");
+        const linkPreview = document.getElementById("linkPreview");
 
         // Update rendered output when HTML input changes
         htmlInput.addEventListener("input", () => {
@@ -134,8 +146,15 @@
             doc.body.addEventListener("mouseover", (event) => {
                 if (event.target.tagName === 'A') {
                     const link = event.target.href;
-                    event.target.title = `Preview: ${link}`;
+                    linkPreview.textContent = `Preview: ${link}`;
+                    linkPreview.style.display = 'block';
+                    linkPreview.style.left = `${event.pageX + 10}px`;
+                    linkPreview.style.top = `${event.pageY + 10}px`;
                 }
+            });
+
+            doc.body.addEventListener("mouseout", () => {
+                linkPreview.style.display = 'none';
             });
         });
 
@@ -175,14 +194,18 @@
         // Add bullet points functionality
         bulletPointsButton.addEventListener("click", () => {
             const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
-            const ul = doc.createElement("ul");
-            for (let i = 0; i < 3; i++) {
-                const li = doc.createElement("li");
-                li.textContent = "•"; // Pode ser alterado para qualquer texto ou ícone
-                ul.appendChild(li);
+            const selection = doc.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const ul = doc.createElement("ul");
+                for (let i = 0; i < 3; i++) {
+                    const li = doc.createElement("li");
+                    li.textContent = "•"; // Bullet point
+                    ul.appendChild(li);
+                }
+                range.insertNode(ul);
+                htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             }
-            doc.body.appendChild(ul);
-            htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
         });
 
         // Add H2 functionality
@@ -191,9 +214,22 @@
             const selection = doc.getSelection();
             if (selection.rangeCount > 0) {
                 const range = selection.getRangeAt(0);
-                const h2 = doc.createElement("h2");
-                h2.appendChild(range.extractContents());
-                range.insertNode(h2);
+                const selectedText = range.extractContents();
+                const parent = range.commonAncestorContainer;
+
+                // Verifica se o texto selecionado já está dentro de um <h2>
+                if (parent.nodeName === 'H2') {
+                    // Se já for <h2>, transforma em texto normal
+                    const textNode = doc.createTextNode(selectedText.textContent);
+                    range.insertNode(textNode);
+                } else {
+                    // Se não for <h2>, transforma em <h2>
+                    const h2 = doc.createElement("h2");
+                    h2.appendChild(selectedText);
+                    range.insertNode(h2);
+                }
+
+                // Atualizar o HTML no textarea
                 htmlInput.value = doc.body.innerHTML.replace(/&nbsp;/g, ' '); // Substituir &nbsp; por espaços normais
             }
         });
