@@ -81,7 +81,7 @@ button:focus {
 }
 
 .link-preview {
-    position: fixed;
+    position: absolute;
     background-color: #ffffff;
     border: 1px solid #ccc;
     padding: 10px;
