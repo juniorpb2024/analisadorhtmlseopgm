@@ -72,7 +72,7 @@ bulletPointsButton.addEventListener("click", () => {
         const range = selection.getRangeAt(0);
         const ul = doc.createElement("ul");
         const li = doc.createElement("li");
-        li.textContent = range.toString() ||;
+        li.textContent = range.toString() || "•";
         ul.appendChild(li);
         range.insertNode(ul);
 
