@@ -4,7 +4,6 @@ const boldButton = document.getElementById("boldButton");
 const linkButton = document.getElementById("linkButton");
 const bulletPointsButton = document.getElementById("bulletPointsButton");
 const h2Button = document.getElementById("h2Button");
-const linkPreview = document.getElementById("linkPreview");
 
 // Atualiza o iframe quando o conteúdo do textarea muda
 htmlInput.addEventListener("input", () => {
@@ -31,23 +30,6 @@ renderedOutput.addEventListener("load", () => {
                 window.location.href = event.target.href;
             }
         }
-    });
-
-    // Preview de link ao passar o mouse
-    doc.body.addEventListener("mousemove", (event) => {
-        if (event.target.tagName === 'A') {
-            const link = event.target.href;
-            linkPreview.innerHTML = `<iframe src="${link}"></iframe>`;
-            linkPreview.style.display = 'block';
-            linkPreview.style.left = `${event.clientX + 10}px`;
-            linkPreview.style.top = `${event.clientY + 10}px`;
-        } else {
-            linkPreview.style.display = 'none';
-        }
-    });
-
-    doc.body.addEventListener("mouseout", () => {
-        linkPreview.style.display = 'none';
     });
 });
 
@@ -99,7 +81,7 @@ bulletPointsButton.addEventListener("click", () => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 const newLi = doc.createElement("li");
-                newLi.textContent = "•";
+                newLi.textContent = "";
                 ul.appendChild(newLi);
                 newLi.focus();
             }
