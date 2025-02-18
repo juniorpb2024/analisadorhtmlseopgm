@@ -79,23 +79,3 @@ button:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
-
-.link-preview {
-    position: absolute;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    z-index: 1000;
-    display: none;
-    pointer-events: none; /* Impede que o preview interfira com o mouse */
-}
-
-.link-preview iframe {
-    width: 300px;
-    height: 200px;
-    border: none;
-    border-radius: 5px;
-}
