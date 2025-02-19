@@ -31,24 +31,27 @@ renderedOutput.addEventListener("load", () => {
     });
 });
 
-// Botão Negrito (Melhorado)
+// Botão Negrito (Corrigido)
 boldButton.addEventListener("click", () => {
     const doc = renderedOutput.contentDocument || renderedOutput.contentWindow.document;
     const selection = doc.getSelection();
 
     if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
-        const selectedText = range.extractContents();
-        const parentTag = range.commonAncestorContainer.parentElement;
+        let selectedText = range.toString();
 
-        if (parentTag && parentTag.tagName === "STRONG") {
-            // Se já está em negrito, remover
+        if (selectedText.trim() === "") return; // Evita negrito sem texto selecionado
+
+        let parentTag = range.commonAncestorContainer.parentElement;
+
+        if (parentTag.tagName === "STRONG") {
+            // Se já está em negrito, remover negrito mantendo o texto
             const textNode = document.createTextNode(parentTag.textContent);
             parentTag.replaceWith(textNode);
         } else {
-            // Se não está em negrito, aplicar
+            // Se não está em negrito, aplicar negrito
             const strong = doc.createElement("strong");
-            strong.appendChild(selectedText);
+            strong.textContent = selectedText;
             range.deleteContents();
             range.insertNode(strong);
         }
@@ -65,13 +68,15 @@ linkButton.addEventListener("click", () => {
 
     if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
-        const selectedText = range.extractContents();
-        const link = prompt("Insira o link:");
+        let selectedText = range.toString();
 
+        if (selectedText.trim() === "") return; // Evita link sem texto selecionado
+
+        const link = prompt("Insira o link:");
         if (link) {
             const anchor = doc.createElement("a");
             anchor.setAttribute("href", link);
-            anchor.textContent = selectedText.textContent;
+            anchor.textContent = selectedText;
             range.deleteContents();
             range.insertNode(anchor);
         }
