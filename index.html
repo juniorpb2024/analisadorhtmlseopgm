@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analisador de HTML SEO PagueMenos</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
@@ -12,30 +12,37 @@
         <p>Desenvolvido por Junior Silva</p>
     </header>
 
-    <div class="button-bar">
-        <button id="copyHtmlButton" class="custom-button turquoise">Copiar HTML</button>
+    <div class="button-container">
+        <button id="boldButton">Negrito</button>
+        <button id="linkButton">Inserir Link</button>
     </div>
 
     <div class="container">
         <div class="block">
-            <div class="button-bar">
-                <button id="copyTextButton" class="custom-button turquoise">Copiar</button>
-                <button id="clearButton" class="custom-button red">Apagar</button>
+            <div class="copy-button-container">
+                <button id="copyHtmlButton" class="copy-html-btn">Copiar</button>
             </div>
             <textarea id="htmlInput" placeholder="Cole o código HTML aqui..."></textarea>
-            <div id="linkProgressContainer">
-                <div id="linkProgressBar"></div>
-                <span id="linkStatus">Nenhum link</span>
+        </div>
+        
+        <div class="block">
+            <div class="text-controls">
+                <button id="copyTextButton" class="copy-text-btn">Copiar</button>
+                <button id="clearTextButton" class="clear-text-btn">Apagar</button>
+            </div>
+            <iframe id="renderedOutput" sandbox="allow-same-origin allow-scripts"></iframe>
+            
+            <div class="link-counter">
+                <div class="counter-header">
+                    <span>Contagem de Hiperlinks: </span>
+                    <span id="linkCount">0</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div id="linkStatus" class="link-status">Ruim!</div>
             </div>
         </div>
-        <div class="block">
-            <iframe id="renderedOutput" sandbox="allow-same-origin allow-scripts"></iframe>
-        </div>
-    </div>
-
-    <div>
-        <button id="boldButton">Negrito</button>
-        <button id="linkButton">Inserir Link</button>
     </div>
 
     <script src="script.js"></script>
